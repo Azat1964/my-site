@@ -13,9 +13,17 @@ fail() {
   exit 1
 }
 
-log "Начало деплоя"
+
 
 cd "$REPO_DIR" || fail "нет каталога $REPO_DIR"
+git fetch || fail "git fetch не удался"
+
+if [ "$(git rev-parse HEAD)" = "$(git rev-parse @{u})" ]; then
+  exit 0
+fi
+
+log "Найдены новые коммиты, начало деплоя"
+
 git pull || fail "git pull не удался"
 
 cp "$REPO_DIR"/*.html "$WEB_DIR"/ || fail "не удалось скопировать файлы"
